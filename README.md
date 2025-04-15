@@ -8,7 +8,9 @@ The primary goal is to leverage a dataset containing patient attributes and heal
 
 ## Dataset
 
-The model was trained using the `cardio_train.csv` dataset.
+The model was trained using the `cardio_train.csv` dataset, which is part of the Cardiovascular Disease dataset available on Kaggle.
+
+* **Original Dataset Link:** [Cardiovascular Disease dataset](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset)
 
 ## Methodology
 
@@ -64,11 +66,3 @@ The cross-validation results using the tuned model (scale_pos_weight=3/2) indica
 * F1-Score: ~0.7373
 
 On the test set, the model achieved an ROC AUC of ~0.80 and a Brier Score of ~0.1842. The feature importance analysis highlighted systolic blood pressure (`ap_hi`), cholesterol levels (`cholesterol_3`), and age as the top predictors. The weight tuning successfully increased recall compared to an unweighted model, aligning with the goal of minimizing missed diagnoses in a medical context.
-
-## How to Use
-
-(Assuming the code is available in a repository)
-1.  Clone the repository.
-2.  Install the required libraries (e.g., using `pip install -r requirements.txt`).
-3.  Ensure the `cardio_train.csv` dataset is accessible.
-4.  Run the Jupyter Notebook or Python script to reproduce the analysis and model training.
