@@ -71,6 +71,7 @@ def train_model(train_path, model_output_path=None):
         'min_child_weight': 1,
         'subsample': 0.8,
         'colsample_bytree': 0.8,
+        'scale_pos_weight': 1.5,  # Class weight of 3/2 for positive class
         'seed': 42
     }
     
@@ -195,36 +196,22 @@ def trigger_airflow_dag():
     """Trigger the Airflow DAG to run the pipeline"""
     print("\n=== Triggering Airflow DAG ===")
     try:
-        # Check if Airflow is running
+        # Use Airflow CLI directly instead of Docker commands
+        import subprocess
         result = subprocess.run(
-            ["docker", "ps", "-q", "-f", "name=airflow-webserver"],
+            ["airflow", "dags", "trigger", "cardio_detection_pipeline"],
             capture_output=True,
             text=True,
             check=True
         )
-        
-        if not result.stdout.strip():
-            print("Airflow is not running. Starting Airflow services...")
-            subprocess.run(
-                ["docker", "compose", "up", "-d", "airflow-webserver", "airflow-scheduler", "postgres"],
-                check=True
-            )
-            print("Airflow services started. Please wait a moment for them to initialize.")
-            print("You can access the Airflow UI at: http://localhost:8080")
-        else:
-            print("Airflow is already running.")
-            
-        # Trigger the DAG
-        print("Triggering the cardio_detection_pipeline DAG...")
-        subprocess.run(
-            ["docker", "exec", "$(docker ps -q -f name=airflow-webserver)", "airflow", "dags", "trigger", "cardio_detection_pipeline"],
-            shell=True,
-            check=True
-        )
-        print("DAG triggered successfully. You can view the progress at: http://localhost:8080")
+        print(f"Airflow DAG triggered successfully: {result.stdout}")
+        print("You can monitor the DAG run in the Airflow UI at http://localhost:8080")
     except subprocess.CalledProcessError as e:
-        print(f"Error triggering Airflow DAG: {e}")
-        print("You can manually access Airflow at http://localhost:8080 if it's running.")
+        print(f"Failed to trigger Airflow DAG: {e}")
+        print(f"Error output: {e.stderr}")
+    except FileNotFoundError:
+        print("Airflow CLI not found. Make sure Airflow is installed in this environment.")
+        print("You can manually trigger the DAG from the Airflow UI at http://localhost:8080")
 
 
 def run_full_pipeline(input_file, model_output_path=None):
