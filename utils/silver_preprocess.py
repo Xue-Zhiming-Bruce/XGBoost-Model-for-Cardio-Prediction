@@ -11,6 +11,11 @@ def process_to_silver(bronze_path):
     df = pd.read_parquet(bronze_path)
     
     # Data cleaning and transformations
+    # 0. Remove duplicate rows
+    print(f"Original data shape: {df.shape}")
+    df = df.drop_duplicates()
+    print(f"After removing duplicates: {df.shape}")
+    
     # 1. Convert age from days to years
     df['age_years'] = df['age'] / 365
     
