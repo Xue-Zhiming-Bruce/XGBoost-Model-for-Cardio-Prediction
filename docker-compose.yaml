@@ -1,0 +1,75 @@
+
+services:
+  jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+    ports:
+      - "8888:8888"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8888"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  airflow-webserver:
+    image: apache/airflow:2.7.1
+    depends_on:
+      - postgres
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__FERNET_KEY=
+      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=True
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__API__AUTH_BACKENDS=airflow.api.auth.backend.basic_auth
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./utils:/opt/airflow/utils
+      - ./datamart:/opt/airflow/datamart
+      - ./cardio_train.csv:/opt/airflow/cardio_train.csv
+      - airflow-logs:/opt/airflow/logs
+      - airflow-plugins:/opt/airflow/plugins
+    ports:
+      - "8080:8080"
+    command: webserver
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  airflow-scheduler:
+    image: apache/airflow:2.7.1
+    depends_on:
+      - postgres
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__FERNET_KEY=
+      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=True
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./utils:/opt/airflow/utils
+      - ./datamart:/opt/airflow/datamart
+      - ./cardio_train.csv:/opt/airflow/cardio_train.csv
+      - airflow-logs:/opt/airflow/logs
+      - airflow-plugins:/opt/airflow/plugins
+    command: scheduler
+
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+
+volumes:
+  postgres-db-volume:
+  airflow-logs:
+  airflow-plugins:
