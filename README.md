@@ -63,13 +63,13 @@ The model was trained using the `cardio_train.csv` dataset, which is part of the
 
 **Class Weight Tuning**: 
 
-For this cardiovascular disease prediction model, we implemented class weight tuning in XGBoost using the `scale_pos_weight` parameter. This approach was chosen specifically for medical predictions, where higher recall (correctly identifying true positive cases) is often crucial, even if it slightly impacts precision.
+For this cardiovascular disease prediction model, I implemented class weight tuning in XGBoost using the `scale_pos_weight` parameter. This approach was chosen specifically for medical predictions, where higher recall (correctly identifying true positive cases) is often crucial, even if it slightly impacts precision.
 
-We set `scale_pos_weight` to 1.5 (ratio of 3:2) for the positive class, which provides an optimal balance between improving recall and maintaining overall model performance. This weighting gives more importance to correctly classifying patients with cardiovascular disease, reducing the chance of missing potential cases that require medical attention.
+I set `scale_pos_weight` to 1.5 (ratio of 3:2) for the positive class, which provides an optimal balance between improving recall and maintaining overall model performance. This weighting gives more importance to correctly classifying patients with cardiovascular disease, reducing the chance of missing potential cases that require medical attention.
 
 ![Performance Metrics for Different Weight Ratios](Weight%20Ratio%20Performances.png)
 
-The chart above shows how different weight ratios affect model performance metrics. Note how the 1:2 ratio significantly increases recall but at the cost of precision and overall accuracy. The 3:2 ratio (1.5) we selected offers a balanced improvement in recall while maintaining good overall performance.
+The chart above shows how different weight ratios affect model performance metrics. Note how the 1:2 ratio significantly increases recall but at the cost of precision and overall accuracy. The 3:2 ratio (1.5) I selected offers a balanced improvement in recall while maintaining good overall performance.
 
 ## Key Libraries Used
 
