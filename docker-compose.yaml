@@ -25,6 +25,7 @@ services:
       - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=True
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
       - AIRFLOW__API__AUTH_BACKENDS=airflow.api.auth.backend.basic_auth
+      - _PIP_ADDITIONAL_REQUIREMENTS=scikit-learn pandas numpy matplotlib seaborn xgboost pyarrow fastparquet
     volumes:
       - ./dags:/opt/airflow/dags
       - ./utils:/opt/airflow/utils
@@ -51,6 +52,7 @@ services:
       - AIRFLOW__CORE__FERNET_KEY=
       - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=True
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - _PIP_ADDITIONAL_REQUIREMENTS=scikit-learn pandas numpy matplotlib seaborn xgboost pyarrow fastparquet
     volumes:
       - ./dags:/opt/airflow/dags
       - ./utils:/opt/airflow/utils
