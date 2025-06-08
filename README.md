@@ -61,33 +61,15 @@ The model was trained using the `cardio_train.csv` dataset, which is part of the
 
 ## Methodology
 
-1.  **Data Loading & Initial Setup**:
-    * Loaded the dataset using pandas.
-    * Imported necessary libraries including pandas, numpy, matplotlib, seaborn, xgboost, scikit-learn, and statsmodels.
+**Class Weight Tuning**: 
 
-2.  **Data Cleaning & Preprocessing**:
-    * Removed 'id' column and duplicate rows. Checked for missing values (none found).
-    * Transformed features: Converted 'age' to years, performed binary encoding for 'gender', and one-hot encoded 'cholesterol' and 'gluc'.
-    * Engineered 'bmi' feature from 'height' and 'weight', then dropped original columns.
-    * Filtered outliers based on physiological constraints for blood pressure ('ap_hi', 'ap_lo'), height, weight, and BMI.
-    * Verified low multicollinearity among features using VIF.
+For this cardiovascular disease prediction model, we implemented class weight tuning in XGBoost using the `scale_pos_weight` parameter. This approach was chosen specifically for medical predictions, where higher recall (correctly identifying true positive cases) is often crucial, even if it slightly impacts precision.
 
-3.  **Exploratory Data Analysis (EDA)**:
-    * Generated histograms for all features to understand their distributions.
-    * Created a correlation heatmap to visualize relationships between features.
+We set `scale_pos_weight` to 1.5 (ratio of 3:2) for the positive class, which provides an optimal balance between improving recall and maintaining overall model performance. This weighting gives more importance to correctly classifying patients with cardiovascular disease, reducing the chance of missing potential cases that require medical attention.
 
-4.  **Model Building & Evaluation**:
-    * Split the data into training and testing sets (80/20 split) stratified by the target variable 'cardio'.
-    * **Class Weight Tuning**: Explicitly tested different `scale_pos_weight` values (1:2, 2:3, 3:4, 4:5) in XGBoost. This tuning was performed recognizing that for medical predictions, higher recall (correctly identifying true positive cases) is often crucial, even if it slightly impacts precision. The ratio 3:2 (weight of 1.5 for the positive class) was selected for the final model as a balance between improving recall and maintaining overall performance.
-    * **Cross-Validation**: Employed Stratified K-Fold cross-validation (5 folds) to get robust estimates of model performance.
-    * **Model Training**: Trained an XGBoost Classifier with selected hyperparameters (e.g., learning_rate=0.1, max_depth=5, scale_pos_weight=3/2).
-    * **Evaluation Metrics**: Evaluated the model using:
-        * Accuracy, Precision, Recall, F1-Score (via cross-validation and on the test set).
-        * ROC Curve and AUC score.
-        * Brier Score for probability calibration.
+![Performance Metrics for Different Weight Ratios](Weight%20Ratio%20Performances.png)
 
-5.  **Feature Importance**:
-    * Calculated and visualized the importance of each feature in the trained XGBoost model. `ap_hi` (systolic blood pressure) was found to be the most influential feature.
+The chart above shows how different weight ratios affect model performance metrics. Note how the 1:2 ratio significantly increases recall but at the cost of precision and overall accuracy. The 3:2 ratio (1.5) we selected offers a balanced improvement in recall while maintaining good overall performance.
 
 ## Key Libraries Used
 
